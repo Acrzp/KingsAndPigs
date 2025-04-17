@@ -5,21 +5,37 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    //Componentes
     private Rigidbody2D m_rigidbody2D;
     private GatterInput m_gatherInput;
     private Transform m_transform;
+    private Animator m_animator;
+
+    //Valores
     [SerializeField] private float speed;
     private int direction = 1;
+    private int idSpeed;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    
+    void Start() //Obtengo los componentes a los que esta asociado el GameObject
     {
         m_gatherInput = GetComponent<GatterInput>();
         m_rigidbody2D = GetComponent<Rigidbody2D>();
         m_transform = GetComponent<Transform>();
+        m_animator = GetComponent<Animator>();
+        idSpeed = Animator.StringToHash("Speed");
     }
 
-    // Update is called once per frame
+    void Update()  //Buscar mantener el Update con pocas instrucciones
+    {
+        SetAnimatorValues();
+    }
+
+    private void SetAnimatorValues()
+    {
+        m_animator.SetFloat(idSpeed, Mathf.Abs(m_rigidbody2D.linearVelocityX));
+    }
+
     void FixedUpdate()
     {
         Move();
