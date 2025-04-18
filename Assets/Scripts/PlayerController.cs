@@ -5,38 +5,55 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //Componentes del player
+    [Header("Components")]
     private Rigidbody2D m_rigidbody2D;
     private GatterInput m_gatherInput;
-    private Transform m_transform;
+    [SerializeField] private Transform m_transform;
     private Animator m_animator;
 
-    [Header("Move and Jump settings")]
+    //Animator Ids
+    private int idSpeed;
+    private int idIsGrounded;
+
+
+    [Header("Move settings")]
     [SerializeField] private float speed;
     private int direction = 1;
+    
+    [Header("Jump settings")]
     [SerializeField] private float jumpForce;
     [SerializeField] private int extraJumps;
     [SerializeField] private float counterExtraJumps;
-    private int idSpeed;
+    [SerializeField] private bool canExtraJump;
 
     [Header("Ground settings")]
     [SerializeField] private Transform lFoot;
     [SerializeField] private Transform rFoot;
+    RaycastHit2D lFootRay;
+    RaycastHit2D rFootRay;
     [SerializeField] private bool isGrounded;
     [SerializeField] private float rayLength;
     [SerializeField] private LayerMask groundLayer;
-    private int idIsGrounded;
 
-    void Start() //Obtengo los componentes a los que esta asociado el GameObject
+    [Header("Wall settings")]
+    [SerializeField] private float checkWallDistance;
+    [SerializeField] private bool isWallDetected;
+
+    private void Awake()
     {
         m_gatherInput = GetComponent<GatterInput>();
         m_rigidbody2D = GetComponent<Rigidbody2D>();
-        m_transform = GetComponent<Transform>();
+        //m_transform = GetComponent<Transform>();
         m_animator = GetComponent<Animator>();
-        idSpeed = Animator.StringToHash("Speed");
+    }
+
+    void Start() //Obtengo los componentes a los que esta asociado el GameObject
+    {
+        idSpeed = Animator.StringToHash("speed");
         idIsGrounded = Animator.StringToHash("isGrounded");
         lFoot = GameObject.Find("LFoot").GetComponent<Transform>();
         rFoot = GameObject.Find("RFoot").GetComponent<Transform>();
+        counterExtraJumps = extraJumps;
     }
 
     void Update()  //Buscar mantener el Update con pocas instrucciones
@@ -52,9 +69,38 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        CheckCollision();
         Move();
         Jump();
-        CheckGround();
+    }
+
+    private void CheckCollision()
+    {
+        HandleGround();
+        HandleWalls();
+
+    }
+
+    private void HandleWalls()
+    {
+        isWallDetected = Physics2D.Raycast(m_transform.position, Vector2.right * direction, checkWallDistance, groundLayer);
+    }
+
+    private void HandleGround()
+    {
+         lFootRay = Physics2D.Raycast(lFoot.position, Vector2.down, rayLength, groundLayer);
+         rFootRay = Physics2D.Raycast(rFoot.position, Vector2.down, rayLength, groundLayer);
+
+        if (lFootRay || rFootRay)
+        {
+            isGrounded = true;
+            counterExtraJumps = extraJumps;
+            canExtraJump = false;
+        }
+        else
+        {
+            isGrounded = false;
+        }
     }
 
     private void Move()
@@ -77,8 +123,11 @@ public class PlayerController : MonoBehaviour
         if(m_gatherInput.IsJumping)
         {
             if(isGrounded)
+            {
                 m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.ValueX, jumpForce);  
-            if (counterExtraJumps > 0)
+                canExtraJump = true;
+            }
+            else if (counterExtraJumps > 0 && canExtraJump)
             {
                 m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.ValueX, jumpForce);
                 counterExtraJumps--;
@@ -87,20 +136,9 @@ public class PlayerController : MonoBehaviour
         m_gatherInput.IsJumping = false;
     }
 
-    private void CheckGround()
+    private void OnDrawGizmos()
     {
-        RaycastHit2D lFootRay = Physics2D.Raycast(lFoot.position, Vector2.down, rayLength, groundLayer);
-        RaycastHit2D rFootRay = Physics2D.Raycast(rFoot.position, Vector2.down, rayLength, groundLayer);
-
-        if(lFootRay || rFootRay)
-        {
-            isGrounded = true;
-            counterExtraJumps = extraJumps;
-        }
-        else
-        {
-            isGrounded = false;
-        }
-
+        Gizmos.DrawLine(m_transform.position, new Vector2(m_transform.position.x + (checkWallDistance * direction), m_transform.position.y));
     }
+
 }
