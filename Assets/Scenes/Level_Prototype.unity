@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f250a7b0ec84f41bfbeb0e51f3b465, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _valueX: 0
+  _value: {x: 0, y: 0}
   _isJumping: 0
 --- !u!114 &887684657
 MonoBehaviour:
@@ -895,6 +895,8 @@ MonoBehaviour:
     m_Bits: 128
   checkWallDistance: 0.3
   isWallDetected: 0
+  canWallSlide: 0
+  slideSpeed: 0
 --- !u!114 &887684658
 MonoBehaviour:
   m_ObjectHideFlags: 0

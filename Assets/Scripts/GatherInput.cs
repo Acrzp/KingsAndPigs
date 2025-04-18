@@ -9,8 +9,8 @@ public class GatterInput : MonoBehaviour
 
 
     //Valores
-    [SerializeField] private float _valueX; //Serialize me permite visualizar y modificar en el inspector un valor
-    public float ValueX { get => _valueX; } //Enapsulamiento para acceder a la variable
+    [SerializeField] private Vector2 _value; //Serialize me permite visualizar y modificar en el inspector un valor
+    public Vector2 Value { get => _value; } //Enapsulamiento para acceder a la variable
 
     [SerializeField] private bool _isJumping;
     public bool IsJumping { get => _isJumping; set => _isJumping = value; }
@@ -24,7 +24,7 @@ public class GatterInput : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Player.Move.performed += StartMove; //Sintaxis para asociar un evento con un mñetodo
+        controls.Player.Move.performed += StartMove; //Sintaxis para asociar un evento con un metodo
         controls.Player.Move.canceled += StopMove; //Revisar documentación para ver los tipos de interaccciones con las entradas
         controls.Player.Jump.performed += StartJump;
         controls.Player.Jump.canceled += StopJump;
@@ -33,13 +33,13 @@ public class GatterInput : MonoBehaviour
 
     private void StartMove(InputAction.CallbackContext context) 
     {
-        _valueX = Mathf.RoundToInt(context.ReadValue<float>());
+        _value = context.ReadValue<Vector2>().normalized;
         
     }
 
     private void StopMove(InputAction.CallbackContext context)
     {
-        _valueX = 0;
+        _value = Vector2.zero;
     }
 
     private void StartJump(InputAction.CallbackContext context)
