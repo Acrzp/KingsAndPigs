@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private int idSpeed;
     private int idIsGrounded;
     private int idIsWallDetected;
+    private int idKnockback;
 
 
     [Header("Move settings")]
@@ -46,6 +47,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isWallJumping;
     [SerializeField] private float wallJumpDuration;
 
+    [Header("Knocked settings")]
+    [SerializeField] private bool isKnocked;
+    [SerializeField] private bool canBeKnocked;
+    [SerializeField] private Vector2 knockPower;
+    [SerializeField] private float knockedDuration;
+
+
     private void Awake()
     {
         m_gatherInput = GetComponent<GatterInput>();
@@ -59,6 +67,7 @@ public class PlayerController : MonoBehaviour
         idSpeed = Animator.StringToHash("speed");
         idIsGrounded = Animator.StringToHash("isGrounded");
         idIsWallDetected = Animator.StringToHash("isWallDetected");
+        idKnockback = Animator.StringToHash("knockback");
         lFoot = GameObject.Find("LFoot").GetComponent<Transform>();
         rFoot = GameObject.Find("RFoot").GetComponent<Transform>();
         counterExtraJumps = extraJumps;
@@ -78,6 +87,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(isKnocked) return;
         CheckCollision();
         Move();
         Jump();
@@ -172,13 +182,28 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WallJumpRoutine());
     }
 
-    IEnumerator WallJumpRoutine() //Corutina (Se ejecuta en 2do plano sin afectar el juego)
+    private IEnumerator WallJumpRoutine() //Corutina (Se ejecuta en 2do plano sin afectar el juego)
     {
         isWallJumping = true;
         yield return new WaitForSeconds(wallJumpDuration);
         isWallJumping =false;
     }
 
+    public void Knockback()
+    {
+        StartCoroutine(KnockbackRoutine());
+        m_rigidbody2D.linearVelocity = new Vector2 (knockPower.x * -direction, knockPower.y);
+        m_animator.SetTrigger(idKnockback);
+    }
+
+    private IEnumerator KnockbackRoutine()
+    {
+        isKnocked = true;
+        canBeKnocked = false;
+        yield return new WaitForSeconds(knockedDuration);
+        isKnocked = false;
+        canBeKnocked = true;
+    }
 
     private void OnDrawGizmos()
     {
