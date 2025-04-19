@@ -897,6 +897,9 @@ MonoBehaviour:
   isWallDetected: 0
   canWallSlide: 0
   slideSpeed: 0
+  wallJumpForce: {x: 7, y: 4}
+  isWallJumping: 0
+  wallJumpDuration: 0.25
 --- !u!114 &887684658
 MonoBehaviour:
   m_ObjectHideFlags: 0

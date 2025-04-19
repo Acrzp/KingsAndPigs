@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Tilemaps;
 using UnityEngine;
@@ -41,6 +42,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isWallDetected;
     [SerializeField] private bool canWallSlide;
     [SerializeField] private float slideSpeed;
+    [SerializeField] private Vector2 wallJumpForce;
+    [SerializeField] private bool isWallJumping;
+    [SerializeField] private float wallJumpDuration;
 
     private void Awake()
     {
@@ -120,6 +124,7 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         if (isWallDetected && !isGrounded) return;
+        if (isWallJumping) return;
         Flip();
         m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.Value.x, m_rigidbody2D.linearVelocityY);
     }
@@ -128,9 +133,14 @@ public class PlayerController : MonoBehaviour
     {
         if(m_gatherInput.Value.x * direction < 0)
         {
-            m_transform.localScale = new Vector3(-m_transform.localScale.x, m_transform.localScale.y, m_transform.localScale.z);
-            direction *= -1;
+            HandleDirection();
         }
+    }
+
+    private void HandleDirection()
+    {
+        m_transform.localScale = new Vector3(-m_transform.localScale.x, m_transform.localScale.y, m_transform.localScale.z);
+        direction *= -1;
     }
 
     private void Jump()
@@ -142,14 +152,33 @@ public class PlayerController : MonoBehaviour
                 m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.Value.x, jumpForce);  
                 canExtraJump = true;
             }
-            else if (counterExtraJumps > 0 && canExtraJump)
-            {
-                m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.Value.x, jumpForce);
-                counterExtraJumps--;
-            }
+            else if (isWallDetected) WallJump();
+            else if (counterExtraJumps > 0 && canExtraJump) ExtraJump();
         }
         m_gatherInput.IsJumping = false;
     }
+
+
+    private void ExtraJump()
+    {
+        m_rigidbody2D.linearVelocity = new Vector2(speed * m_gatherInput.Value.x, jumpForce);
+        counterExtraJumps--;
+    }
+    
+    private void WallJump()
+    {
+        m_rigidbody2D.linearVelocity = new Vector2 (wallJumpForce.x * -direction, wallJumpForce.y); 
+        HandleDirection();
+        StartCoroutine(WallJumpRoutine());
+    }
+
+    IEnumerator WallJumpRoutine() //Corutina (Se ejecuta en 2do plano sin afectar el juego)
+    {
+        isWallJumping = true;
+        yield return new WaitForSeconds(wallJumpDuration);
+        isWallJumping =false;
+    }
+
 
     private void OnDrawGizmos()
     {
