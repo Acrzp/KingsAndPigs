@@ -203,6 +203,8 @@ public class PlayerController : MonoBehaviour
         //canBeKnocked = true;
     }
 
+    public void Die() => Destroy(gameObject);
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(mTransform.position, new Vector2(mTransform.position.x + (checkWallDistance * _direction), mTransform.position.y));

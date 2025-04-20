@@ -48,7 +48,7 @@ public class Diamond : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!collision.CompareTag("Player")) return; //Al estar las tags almacenadas en cache esta mucho mejor optimizado
+        if(!collision.CompareTag("Player")) return; //Al estar las tags almacenadas en cache se optizima mejor 
         //spriteRenderer.enabled = false;
         mRigidbody_2D.simulated = false;
         gameManager.AddDiamond();

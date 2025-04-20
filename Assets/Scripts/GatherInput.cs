@@ -23,7 +23,7 @@ public class GatterInput : MonoBehaviour
     private void OnEnable()
     {
         _controls.Player.Move.performed += StartMove; //Sintaxis para asociar un evento con un metodo
-        _controls.Player.Move.canceled += StopMove; //Revisar documentaci�n para ver los tipos de interaccciones con las entradas
+        _controls.Player.Move.canceled += StopMove; //Revisar documentacion para ver los tipos de interaccciones con las entradas
         _controls.Player.Jump.performed += StartJump;
         _controls.Player.Jump.canceled += StopJump;
         _controls.Player.Enable();
