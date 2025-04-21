@@ -26,7 +26,7 @@ public class Diamond : MonoBehaviour
 
     private void Start()
     {
-        gameManager = GameManager.instance;
+        gameManager = GameManager.Instance;
         SetRandomDiamond();
     }
 
