@@ -14,7 +14,7 @@ public class GatterInput : MonoBehaviour
     [SerializeField] private bool isJumping;
     public bool IsJumping { get => isJumping; set => isJumping = value; }
     
-    private void Awake() //Primer m�todo que se manda a llamar 
+    private void Awake() //Primer metodo que se manda a llamar 
     {
         _controls = new Controls();
 
