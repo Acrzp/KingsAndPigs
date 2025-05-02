@@ -7,13 +7,15 @@ public class GameManager : MonoBehaviour
 {
    public static GameManager Instance; 
    
-   [Header("Player Settings")]
-   [SerializeField] private GameObject playerPrefab;
-   [SerializeField] private Transform playerRespawnPoint;
-   [SerializeField] private PlayerController playerController;
-   [SerializeField] private float respawnPlayerDelay;
+    [Header("Player Settings")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform playerRespawnPoint;
+    [SerializeField] private float respawnPlayerDelay;
+    [SerializeField] private PlayerController playerController;
 
-    public PlayerController PlayerController => playerController;
+    [Header("Respawn Settings")]
+    public bool hasCheckpointActive;
+    public Vector3 checkpointRespawnPosition;
 
     [Header("Diamond Manager")]
     [SerializeField] private int diamondCollected;
@@ -27,8 +29,12 @@ public class GameManager : MonoBehaviour
         if(Instance == null) Instance = this; //Instanciar a si mismo el GameManager
         else Destroy(gameObject); //Destruir el resto de GameManagers en una escena
     }
-    
-    public void RespawnPlayer() => StartCoroutine(RespawnPlayerCoroutine());
+
+    public void RespawnPlayer()
+    {
+        if (hasCheckpointActive) playerRespawnPoint.position = checkpointRespawnPosition;
+        StartCoroutine(RespawnPlayerCoroutine());
+    }
 
     private IEnumerator RespawnPlayerCoroutine()
     {
