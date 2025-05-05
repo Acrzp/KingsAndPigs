@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class GatterInput : MonoBehaviour
+public class GatherInput : MonoBehaviour
 {
     //Componentes
     private Controls _controls;

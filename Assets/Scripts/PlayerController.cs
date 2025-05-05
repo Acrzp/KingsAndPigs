@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Components")]
     private Rigidbody2D _rigidbody2D;
-    private GatterInput _gatherInput;
+    private GatherInput _gatherInput;
     [SerializeField] private Transform myTransform;
     private Animator _animator;
 
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake() //Obtengo los componentes a los que esta asociado el GameObject
     {
-        _gatherInput = GetComponent<GatterInput>();
+        _gatherInput = GetComponent<GatherInput>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         myTransform = GetComponent<Transform>();
         _animator = GetComponent<Animator>();
@@ -200,7 +200,7 @@ public class PlayerController : MonoBehaviour
     {
         isWallJumping = true;
         yield return new WaitForSeconds(wallJumpDuration);
-        isWallJumping =false;
+        isWallJumping = false;
     }
 
     public void Knockback()
