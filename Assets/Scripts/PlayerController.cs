@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private readonly int _idIsWallDetected = Animator.StringToHash("isWallDetected");
     private readonly int _idKnockback = Animator.StringToHash("knockback");
     private readonly int _idIdle = Animator.StringToHash("Idle");
+    private readonly int _idDoorIn = Animator.StringToHash("doorIn");
 
     [Header("Move settings")]
     [SerializeField] private float speed;
@@ -224,6 +226,21 @@ public class PlayerController : MonoBehaviour
         GameObject _deathVFXPrefab = Instantiate(deathVFX, myTransform.position, Quaternion.identity); 
         //Instanciar desde un prefab al deathVFX en la posicion y orientacion del player
         Destroy(gameObject);
+    }
+
+    public void DoorIn()
+    {
+        _rigidbody2D.linearVelocity = Vector2.zero;
+        _animator.Play(_idIdle); //Se forza el Idle después de detener el movimiento
+        _animator.SetBool(_idDoorIn, true);
+        canMove = false;
+        StartCoroutine(DoorInRoutine());
+    }
+
+    private IEnumerator DoorInRoutine()
+    {
+        yield return new WaitForSeconds(moveDelay);
+        SceneManager.LoadScene(0);
     }
 
     private void OnDrawGizmos()
