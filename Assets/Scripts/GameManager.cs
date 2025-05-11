@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [Header("Diamond Manager")]
     [SerializeField] private int diamondCollected;
     [SerializeField] private bool diamondHaveRandomLook;
+    [SerializeField] private int totalDiamonds;
 
     public int DiamondCollected => diamondCollected;
     public bool DiamondHaveRandomLook => diamondHaveRandomLook; 
@@ -28,6 +29,18 @@ public class GameManager : MonoBehaviour
     {
         if(Instance == null) Instance = this; //Instanciar a si mismo el GameManager
         else Destroy(gameObject); //Destruir el resto de GameManagers en una escena
+    }
+
+    private void Start()
+    {
+        TotalDiamondsInLevel();
+    }
+
+    private void TotalDiamondsInLevel()
+    {
+        //Diamond[] diamonds = FindObjectsByType<Diamond>(FindObjectsSortMode.None); //Mayor coste de ejecucion
+        GameObject[] diamonds = GameObject.FindGameObjectsWithTag("Diamond");
+        totalDiamonds = diamonds.Length;
     }
 
     public void RespawnPlayer()
